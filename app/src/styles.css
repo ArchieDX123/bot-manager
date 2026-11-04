@@ -1668,3 +1668,6 @@ select {
   stroke: #16181c33;
   stroke-width: 8;
 }
+[data-theme='light'] .select-pill select {
+  background: none;
+}
