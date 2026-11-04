@@ -176,6 +176,13 @@ export function useStore() {
     setActiveId(null);
   }, []);
 
+  /** Uitloggen: bedrijf en bots van deze computer wissen; daarna volgt het welkomstscherm. */
+  const logout = useCallback(() => {
+    setBots([]);
+    setActiveId(null);
+    setBrand(null);
+  }, []);
+
   return {
     bots,
     brand,
@@ -192,6 +199,7 @@ export function useStore() {
     exportJson,
     importJson,
     clearAll,
+    logout,
   };
 }
 

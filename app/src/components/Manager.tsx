@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Store, ImportMode } from '../store';
 import { BrandForm } from './BrandForm';
-import { ArrowDown, ArrowUp, Close, Download, Link, Pencil, Plus, Star, Trash, Upload } from '../icons';
+import { ArrowDown, ArrowUp, Close, Download, Link, Logout, Pencil, Plus, Star, Trash, Upload } from '../icons';
 
 interface Props {
   store: Store;
@@ -10,17 +10,19 @@ interface Props {
   onNew: () => void;
   onGrokImport: () => void;
   onSelect: (id: string) => void;
+  onLogout: () => void;
   onClose: () => void;
 }
 
 /** Zijpaneel om bots, bedrijfsgegevens, back-ups en weergave te beheren. */
-export function Manager({ store, onEdit, onNew, onGrokImport, onSelect, onClose }: Props) {
+export function Manager({ store, onEdit, onNew, onGrokImport, onSelect, onLogout, onClose }: Props) {
   const { bots, brand, setBrand, settings, setSettings } = store;
   const fileInput = useRef<HTMLInputElement>(null);
   const [note, setNote] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [mode, setMode] = useState<ImportMode>('merge');
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const importFile = async (file: File) => {
     try {
@@ -168,6 +170,37 @@ export function Manager({ store, onEdit, onNew, onGrokImport, onSelect, onClose 
             )
           )}
         </section>
+
+        {brand && (
+          <section className="drawer-section">
+            <h3>Uitloggen</h3>
+            {confirmLogout ? (
+              <>
+                <p className="note">
+                  Je bedrijf en {bots.length === 1 ? 'je bot worden' : `alle ${bots.length} bots worden`} van deze computer gewist.
+                  Maak eerst een back-up als je ze later terug wilt.
+                </p>
+                <div className="row">
+                  <button className="btn sm" onClick={store.exportJson}>
+                    <Download width={14} height={14} /> Back-up maken
+                  </button>
+                  <button className="btn btn-danger sm" onClick={onLogout}>
+                    Uitloggen
+                  </button>
+                  <button className="btn sm" onClick={() => setConfirmLogout(false)}>
+                    Annuleer
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="row">
+                <button className="btn" onClick={() => setConfirmLogout(true)}>
+                  <Logout width={16} height={16} /> Uitloggen bij {brand.name}
+                </button>
+              </div>
+            )}
+          </section>
+        )}
 
         <section className="drawer-section">
           <h3>Weergave</h3>

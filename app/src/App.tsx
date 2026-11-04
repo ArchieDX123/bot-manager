@@ -211,6 +211,11 @@ export default function App() {
               select(id);
               setManagerOpen(false);
             }}
+            onLogout={() => {
+              store.logout();
+              setFavoritesOnly(false);
+              setManagerOpen(false);
+            }}
             onClose={() => setManagerOpen(false)}
           />
         )}
