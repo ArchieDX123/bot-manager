@@ -1,0 +1,11 @@
+# Persoonlijke gegevens: nooit uploaden
+mijn-bots-backup.json
+*.backup.json
+
+# Lokale instellingen en tijdelijke bestanden
+.claude/
+node_modules/
+*.log
+Thumbs.db
+desktop.ini
+gh-login.txt
