@@ -1,16 +1,41 @@
 {
   "name": "bushing-bot-manager",
+  "productName": "Bushing Bot Manager",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
-  "dependencies": {
-    "@fontsource/inter-tight": "^5.3.0",
-    "@fontsource/jetbrains-mono": "^5.3.0",
-    "framer-motion": "^12.43.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
-  },
   "description": "Bushing Bot Manager: overzicht en beheer van de Grok-assistenten",
   "author": "Bushing",
-  "main": "electron/main.cjs"
+  "main": "electron/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --publish never"
+  },
+  "devDependencies": {
+    "electron": "45.2.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "be.bushing.botmanager",
+    "productName": "Bushing Bot Manager",
+    "artifactName": "Bushing-Bot-Manager-${os}-${arch}.${ext}",
+    "directories": { "output": "release", "buildResources": "build" },
+    "files": ["dist/**/*", "electron/**/*", "build/icon.png", "package.json"],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [{ "target": "portable", "arch": ["x64"] }]
+    },
+    "portable": { "artifactName": "Bushing-Bot-Manager-Windows.exe" },
+    "mac": {
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "target": [
+        { "target": "dmg", "arch": ["universal"] },
+        { "target": "zip", "arch": ["universal"] }
+      ]
+    },
+    "dmg": { "artifactName": "Bushing-Bot-Manager-Mac.dmg" },
+    "afterPack": "build/adhoc-sign.cjs"
+  }
 }

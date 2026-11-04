@@ -9,3 +9,5 @@ node_modules/
 Thumbs.db
 desktop.ini
 gh-login.txt
+app/release/
+package-lock.json

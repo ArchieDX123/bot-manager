@@ -3,13 +3,26 @@
 Een desktopapp om alle Grok-assistenten van Bushing overzichtelijk te bekijken.
 Links staat een grote ronde weergave van de gekozen bot, waarvan de ogen je muis volgen. Rechts staat wat de bot doet en hoe je hem opent in Grok.
 
-## Downloaden (Windows)
+## Downloaden
 
-1. Ga naar **Releases** (rechts op deze pagina) en download `Bushing-Bot-Manager-Windows.zip`.
-2. Pak de zip uit (rechtsklik > **Alles uitpakken**).
-3. Dubbelklik op **Bushing Bot Manager.exe**.
-4. Toont Windows "Onbekende uitgever"? Klik op **Meer info** > **Toch uitvoeren**.
-   De app is niet digitaal ondertekend, daarom verschijnt deze melding.
+Ga naar **Releases** (rechts op deze pagina) en kies het bestand voor jouw computer.
+
+### Windows
+
+1. Download `Bushing-Bot-Manager-Windows.exe`.
+2. Dubbelklik erop. Installeren is niet nodig.
+3. Toont Windows "Onbekende uitgever"? Klik op **Meer info** > **Toch uitvoeren**.
+
+### Mac (Apple Silicon en Intel)
+
+1. Download `Bushing-Bot-Manager-Mac.dmg` en open het.
+2. Sleep **Bushing Bot Manager** naar de map **Apps**.
+3. Open de app. De eerste keer meldt macOS dat de app niet gecontroleerd kan worden.
+   Klik op **Gereed**, ga naar **Systeeminstellingen** > **Privacy en beveiliging**,
+   scrol naar beneden en klik bij Bushing Bot Manager op **Open toch**.
+   Dit hoeft maar één keer.
+
+De app is niet betaald ondertekend bij Microsoft of Apple, daarom verschijnen deze meldingen.
 
 ## Gebruik
 
