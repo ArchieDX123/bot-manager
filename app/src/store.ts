@@ -19,7 +19,9 @@ const LEGACY = {
 };
 
 export const DEFAULT_ACCENT = '#E8552B';
-const DEFAULT_SETTINGS: Settings = { showGrid: true, eyeTracking: true };
+const systemLanguage = (): Settings['language'] =>
+  typeof navigator !== 'undefined' && /^nl\b/i.test(navigator.language) ? 'nl' : 'en';
+const DEFAULT_SETTINGS: Settings = { showGrid: true, eyeTracking: true, theme: 'dark', language: systemLanguage() };
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -54,7 +56,7 @@ function migrateLegacy() {
     write(KEYS.settings, {
       showGrid: oldSettings.showGrid ?? true,
       eyeTracking: oldSettings.eyeTracking ?? true,
-    } satisfies Settings);
+    } satisfies Partial<Settings>);
     const active = localStorage.getItem(LEGACY.active);
     if (active) localStorage.setItem(KEYS.active, active);
   } catch {
@@ -136,6 +138,19 @@ export function useStore() {
       if (from < 0 || to < 0 || to >= list.length) return list;
       const next = [...list];
       [next[from], next[to]] = [next[to], next[from]];
+      return next;
+    });
+  }, []);
+
+  /** Slepen in Beheer: zet een bot op de plaats van een andere. */
+  const moveBotTo = useCallback((id: string, targetId: string) => {
+    setBots((list) => {
+      const from = list.findIndex((b) => b.id === id);
+      const to = list.findIndex((b) => b.id === targetId);
+      if (from < 0 || to < 0 || from === to) return list;
+      const next = [...list];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
       return next;
     });
   }, []);
@@ -247,6 +262,7 @@ export function useStore() {
     removeBot,
     toggleFavorite,
     moveBot,
+    moveBotTo,
     exportJson,
     importJson,
     clearAll,

@@ -2,7 +2,7 @@
   "name": "bot-manager",
   "productName": "Bot Manager",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Bot Manager: overzicht en beheer van je Grok-assistenten",
   "author": "Bot Manager",
   "type": "module",
@@ -33,6 +33,12 @@
       "icon": "build/icon.png",
       "target": [
         {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
           "target": "portable",
           "arch": [
             "x64"
@@ -41,7 +47,7 @@
       ]
     },
     "portable": {
-      "artifactName": "Bot-Manager-Windows.exe"
+      "artifactName": "Bot-Manager-Windows-portable.exe"
     },
     "mac": {
       "icon": "build/icon.png",
@@ -65,7 +71,24 @@
     "dmg": {
       "artifactName": "Bot-Manager-Mac.dmg"
     },
-    "afterPack": "build/adhoc-sign.cjs"
+    "afterPack": "build/adhoc-sign.cjs",
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "artifactName": "Bot-Manager-Setup.exe",
+      "shortcutName": "Bot Manager",
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ArchieDX123",
+        "repo": "bot-manager",
+        "releaseType": "release"
+      }
+    ]
   },
   "devDependencies": {
     "@fontsource/inter-tight": "^5.3.0",
@@ -80,5 +103,8 @@
     "react-dom": "^19.3.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

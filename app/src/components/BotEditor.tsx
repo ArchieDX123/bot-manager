@@ -5,6 +5,7 @@ import { SHAPES, SHAPE_KEYS, SWATCHES } from '../shapes';
 import { BotFace } from './BotFace';
 import { Close } from '../icons';
 import { readImage } from '../files';
+import { useT } from '../i18n';
 
 const EMPTY: BotDraft = {
   name: '',
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
+  const t = useT();
   const [draft, setDraft] = useState<BotDraft>(bot ? { ...bot } : EMPTY);
   const [tags, setTags] = useState((bot?.tags ?? []).join(', '));
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -61,15 +63,15 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="modal-head">
-          <h2>{bot ? `${bot.name} bewerken` : 'Nieuwe bot'}</h2>
-          <button type="button" className="icon-btn" onClick={onClose} aria-label="Sluiten">
+          <h2>{bot ? t('{name} bewerken', { name: bot.name }) : t('Nieuwe bot')}</h2>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label={t('Sluiten')}>
             <Close />
           </button>
         </div>
 
         <div className="editor">
           <div className="editor-preview">
-            <BotFace bot={{ ...draft, name: draft.name || 'Nieuwe bot' }} tracking size={180} />
+            <BotFace bot={{ ...draft, name: draft.name || t('Nieuwe bot') }} tracking size={180} />
             <div className="swatches">
               {SWATCHES.map((c) => (
                 <button
@@ -78,21 +80,21 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
                   className={`swatch-btn ${draft.color === c ? 'is-on' : ''}`}
                   style={{ background: c }}
                   onClick={() => set('color', c)}
-                  aria-label={`Kleur ${c}`}
+                  aria-label={`${t('Kleur')} ${c}`}
                 />
               ))}
-              <label className="swatch-btn custom" title="Eigen kleur">
-                <input type="color" value={draft.color} onChange={(e) => set('color', e.target.value)} aria-label="Eigen kleur" />
+              <label className="swatch-btn custom" title={t('Eigen kleur')}>
+                <input type="color" value={draft.color} onChange={(e) => set('color', e.target.value)} aria-label={t('Eigen kleur')} />
               </label>
             </div>
-            <div className="shapes" role="radiogroup" aria-label="Vorm">
+            <div className="shapes" role="radiogroup" aria-label={t('Vorm')}>
               {SHAPE_KEYS.map((k) => (
                 <button
                   key={k}
                   type="button"
                   role="radio"
                   aria-checked={draft.shape === k}
-                  title={SHAPES[k].label}
+                  title={t(SHAPES[k].label)}
                   className={`shape-btn ${draft.shape === k ? 'is-on' : ''}`}
                   onClick={() => set('shape', k)}
                 >
@@ -103,7 +105,7 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
               ))}
             </div>
             <label className="file-btn">
-              {draft.avatar ? 'Andere afbeelding' : 'Eigen afbeelding (optioneel)'}
+              {draft.avatar ? t('Andere afbeelding') : t('Eigen afbeelding (optioneel)')}
               <input
                 type="file"
                 accept="image/*"
@@ -115,7 +117,7 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
                     setImgError(null);
                     set('avatar', await readImage(file));
                   } catch (err) {
-                    setImgError(err instanceof Error ? err.message : 'Afbeelding kon niet geladen worden.');
+                    setImgError(t(err instanceof Error ? err.message : 'Afbeelding kon niet geladen worden.'));
                   }
                 }}
               />
@@ -123,23 +125,23 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
             {imgError && <small className="err">{imgError}</small>}
             {draft.avatar && (
               <button type="button" className="link" onClick={() => set('avatar', undefined)}>
-                Afbeelding verwijderen
+                {t('Afbeelding verwijderen')}
               </button>
             )}
           </div>
 
           <div className="fields">
             <label>
-              Naam
-              <input value={draft.name} onChange={(e) => set('name', e.target.value)} placeholder="bv. Sales Manager" autoFocus />
+              {t('Naam')}
+              <input value={draft.name} onChange={(e) => set('name', e.target.value)} placeholder={t('bv. Sales Manager')} autoFocus />
             </label>
             <label>
-              Taak
-              <input value={draft.role} onChange={(e) => set('role', e.target.value)} placeholder="bv. Opvolging & offertes" />
+              {t('Taak')}
+              <input value={draft.role} onChange={(e) => set('role', e.target.value)} placeholder={t('bv. Opvolging & offertes')} />
             </label>
             <label>
-              Afdeling / categorie
-              <input value={draft.team} onChange={(e) => set('team', e.target.value)} list="teams" placeholder="bv. Verkoop" />
+              {t('Afdeling / categorie')}
+              <input value={draft.team} onChange={(e) => set('team', e.target.value)} list="teams" placeholder={t('bv. Verkoop')} />
               <datalist id="teams">
                 {teams.map((t) => (
                   <option key={t} value={t} />
@@ -147,27 +149,27 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
               </datalist>
             </label>
             <label>
-              Grok-link
+              {t('Grok-link')}
               <input
                 value={draft.grokUrl}
                 onChange={(e) => set('grokUrl', e.target.value)}
                 placeholder="https://grok.com/…"
                 className={urlOk ? '' : 'invalid'}
               />
-              {!urlOk && <small className="err">Link moet starten met https://</small>}
+              {!urlOk && <small className="err">{t('Link moet starten met https://')}</small>}
             </label>
             <label className="span2">
-              Beschrijving
+              {t('Beschrijving')}
               <textarea
                 rows={3}
                 value={draft.description}
                 onChange={(e) => set('description', e.target.value)}
-                placeholder="Waarvoor gebruik je deze assistent?"
+                placeholder={t('Waarvoor gebruik je deze assistent?')}
               />
             </label>
             <label className="span2">
-              Tags <small>(komma-gescheiden)</small>
-              <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="offertes, opvolging" />
+              {t('Tags')} <small>{t('(komma-gescheiden)')}</small>
+              <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('offertes, opvolging')} />
             </label>
           </div>
         </div>
@@ -176,25 +178,25 @@ export function BotEditor({ bot, teams, onSave, onDelete, onClose }: Props) {
           {onDelete &&
             (confirmDelete ? (
               <span className="confirm">
-                Zeker verwijderen?{' '}
+                {t('Zeker verwijderen?')}{' '}
                 <button type="button" className="btn btn-danger" onClick={onDelete}>
-                  Ja, verwijder
+                  {t('Ja, verwijder')}
                 </button>
                 <button type="button" className="btn" onClick={() => setConfirmDelete(false)}>
-                  Nee
+                  {t('Nee')}
                 </button>
               </span>
             ) : (
               <button type="button" className="btn btn-ghost-danger" onClick={() => setConfirmDelete(true)}>
-                Verwijderen
+                {t('Verwijderen')}
               </button>
             ))}
           <span className="spacer" />
           <button type="button" className="btn" onClick={onClose}>
-            Annuleren
+            {t('Annuleren')}
           </button>
           <button type="submit" className="btn btn-primary" disabled={!valid} style={{ '--bot': draft.color } as CSSProperties}>
-            {bot ? 'Opslaan' : 'Toevoegen'}
+            {bot ? t('Opslaan') : t('Toevoegen')}
           </button>
         </div>
       </motion.form>

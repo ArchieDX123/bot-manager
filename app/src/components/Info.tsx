@@ -2,6 +2,8 @@ import type { CSSProperties } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Bot } from '../types';
 import { External, Pencil, Star } from '../icons';
+import { useT } from '../i18n';
+import { hasBotLink } from '../grok';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -16,6 +18,7 @@ interface Props {
 
 /** Rechts: alle informatie over de gekozen bot. */
 export function Info({ bot, index, total, direction, onFavorite, onEdit }: Props) {
+  const t = useT();
   return (
     <section className="info">
       <AnimatePresence mode="wait" initial={false} custom={direction}>
@@ -40,7 +43,7 @@ export function Info({ bot, index, total, direction, onFavorite, onEdit }: Props
               {bot.role}
             </p>
           )}
-          <p className="info-desc">{bot.description || 'Nog geen beschrijving.'}</p>
+          <p className="info-desc">{bot.description || t('Nog geen beschrijving.')}</p>
           {bot.tags.length > 0 && (
             <ul className="tags">
               {bot.tags.map((t) => (
@@ -57,27 +60,27 @@ export function Info({ bot, index, total, direction, onFavorite, onEdit }: Props
                 rel="noreferrer"
                 style={{ '--bot': bot.color } as CSSProperties}
               >
-                Open in Grok <External width={16} height={16} />
+                {t('Open in Grok')} <External width={16} height={16} />
               </a>
             ) : (
-              <button className="btn btn-primary" onClick={onEdit} title="Nog geen Grok-link ingesteld">
-                Grok-link instellen
+              <button className="btn btn-primary" onClick={onEdit} title={t('Nog geen Grok-link ingesteld')}>
+                {t('Grok-link instellen')}
               </button>
             )}
             <button
               className={`icon-btn ${bot.favorite ? 'is-on' : ''}`}
               onClick={onFavorite}
               aria-pressed={bot.favorite}
-              title="Favoriet (F)"
-              aria-label="Favoriet"
+              title={t('Favoriet (F)')}
+              aria-label={t('Favoriet')}
             >
               <Star filled={bot.favorite} />
             </button>
-            <button className="icon-btn" onClick={onEdit} title="Bewerken (E)" aria-label="Bewerken">
+            <button className="icon-btn" onClick={onEdit} title={t('Bewerken (E)')} aria-label={t('Bewerken')}>
               <Pencil />
             </button>
           </div>
-          {!bot.grokUrl && <p className="hint">Deze bot heeft nog geen Grok-link.</p>}
+          {!hasBotLink(bot.grokUrl) && <p className="hint">{t('Deze bot heeft nog geen eigen Grok-link. Voeg hem toe via Beheer.')}</p>}
         </motion.div>
       </AnimatePresence>
     </section>

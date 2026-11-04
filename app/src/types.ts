@@ -39,4 +39,6 @@ export interface Brand {
 export interface Settings {
   showGrid: boolean;
   eyeTracking: boolean;
+  theme: 'dark' | 'light' | 'system';
+  language: 'nl' | 'en';
 }

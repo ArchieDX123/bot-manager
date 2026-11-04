@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { motion } from 'framer-motion';
 import type { Bot } from '../types';
 import { Search, Star } from '../icons';
+import { useT } from '../i18n';
 
 interface Props {
   bots: Bot[];
@@ -11,6 +12,7 @@ interface Props {
 
 /** Zoekvenster: zoekt in naam, taak, afdeling, beschrijving en tags. */
 export function SearchPalette({ bots, onSelect, onClose }: Props) {
+  const t = useT();
   const [query, setQuery] = useState('');
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -57,8 +59,8 @@ export function SearchPalette({ bots, onSelect, onClose }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKey}
-            placeholder="Zoek op naam, functie, afdeling of tag…"
-            aria-label="Zoeken"
+            placeholder={t('Zoek op naam, functie, afdeling of tag…')}
+            aria-label={t('Zoeken')}
           />
           <kbd>esc</kbd>
         </div>
@@ -80,7 +82,7 @@ export function SearchPalette({ bots, onSelect, onClose }: Props) {
               </button>
             </li>
           ))}
-          {!results.length && <li className="empty">Geen bots gevonden voor “{query}”.</li>}
+          {!results.length && <li className="empty">{t('Geen bots gevonden voor “{q}”.', { q: query })}</li>}
         </ul>
       </motion.div>
     </motion.div>

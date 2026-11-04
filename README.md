@@ -9,9 +9,11 @@ Ga naar **[Releases](../../releases/latest)** en kies het bestand voor jouw comp
 
 ### Windows
 
-1. Download `Bot-Manager-Windows.exe`.
-2. Dubbelklik erop. Installeren is niet nodig.
-3. Toont Windows "Onbekende uitgever"? Klik op **Meer info** > **Toch uitvoeren**.
+1. Download `Bot-Manager-Setup.exe` en dubbelklik erop. De app wordt geïnstalleerd en krijgt een snelkoppeling op je bureaublad en in het Startmenu.
+2. Toont Windows "Onbekende uitgever"? Klik op **Meer info** > **Toch uitvoeren**.
+3. Nieuwe versies worden voortaan automatisch gedownload; je krijgt een melding om te herstarten.
+
+Liever niets installeren? Download dan `Bot-Manager-Windows-portable.exe` en start die gewoon. Die versie meldt nieuwe versies, maar werkt zichzelf niet bij.
 
 ### Mac (Apple Silicon en Intel)
 
@@ -20,6 +22,7 @@ Ga naar **[Releases](../../releases/latest)** en kies het bestand voor jouw comp
 3. Open de app. De eerste keer meldt macOS dat de app niet gecontroleerd kan worden.
    Klik op **Gereed**, ga naar **Systeeminstellingen** > **Privacy en beveiliging**,
    scrol naar beneden en klik bij Bot Manager op **Open toch**. Dit hoeft maar één keer.
+4. Is er een nieuwe versie, dan meldt de app dat met een downloadknop.
 
 De app is niet betaald ondertekend bij Microsoft of Apple, daarom verschijnen deze meldingen.
 
@@ -49,7 +52,12 @@ De app is niet betaald ondertekend bij Microsoft of Apple, daarom verschijnen de
 | Favoriet | ster of `F`; met **Favorieten** zie je alleen je favorieten |
 | Bewerken / nieuwe bot | `E` / `N` |
 | Grok-links plakken | `G` |
-| Beheer | volgorde, verwijderen, bedrijfsgegevens, back-up, weergave |
+| Per afdeling bekijken | keuzelijst **Alle afdelingen** bovenaan |
+| Volgorde veranderen | sleep een bot in **Beheer** |
+| Ontbrekende Grok-links | **Beheer > Grok-links aanvullen**: plak de link per bot |
+| Thema en taal | **Beheer > Weergave**: donker, licht of systeem; Nederlands of English |
+| Updates | **Beheer > Updates** |
+| Uitloggen | **Beheer > Uitloggen** wist je bedrijf en bots van deze computer |
 
 Je gegevens blijven op je eigen computer. Maak via **Beheer > Exporteren** af en toe een back-up (JSON); met **Importeren** zet je die terug, ook op een andere computer.
 

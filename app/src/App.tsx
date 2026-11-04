@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type WheelEvent } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { useStore, DEFAULT_ACCENT } from './store';
-import type { BotDraft } from './types';
+import { useStore, DEFAULT_ACCENT, type Store } from './store';
+import type { BotDraft, Settings } from './types';
 import { Background, Header, Rail } from './components/Layout';
 import { Stage } from './components/Stage';
 import { Info } from './components/Info';
@@ -11,15 +11,46 @@ import { Manager } from './components/Manager';
 import { GrokImport } from './components/GrokImport';
 import { Onboarding } from './components/Onboarding';
 import { GrokSetup } from './components/GrokSetup';
+import { UpdateNotice } from './components/UpdateNotice';
+import { I18nProvider, useT } from './i18n';
+import { useUpdates } from './updates';
 import { Link, Plus, Sparkle } from './icons';
 
 type Editing = { mode: 'new' } | { mode: 'edit'; id: string } | null;
 
 export default function App() {
   const store = useStore();
+  useTheme(store.settings.theme);
+  return (
+    <I18nProvider lang={store.settings.language}>
+      <Main store={store} />
+    </I18nProvider>
+  );
+}
+
+/** Zet data-theme op <html>; "systeem" volgt de instelling van de computer. */
+function useTheme(theme: Settings['theme']) {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme !== 'system') {
+      root.dataset.theme = theme;
+      return;
+    }
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    const apply = () => (root.dataset.theme = mq.matches ? 'light' : 'dark');
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, [theme]);
+}
+
+function Main({ store }: { store: Store }) {
+  const t = useT();
   const { bots, brand, settings, activeId, setActiveId } = store;
+  const updates = useUpdates();
 
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [team, setTeam] = useState<string | null>(null);
   const [direction, setDirection] = useState(1);
   const [searchOpen, setSearchOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
@@ -27,7 +58,16 @@ export default function App() {
   const [setupOpen, setSetupOpen] = useState(false);
   const [editing, setEditing] = useState<Editing>(null);
 
-  const visible = useMemo(() => (favoritesOnly ? bots.filter((b) => b.favorite) : bots), [bots, favoritesOnly]);
+  const teams = useMemo(() => [...new Set(bots.map((b) => b.team))], [bots]);
+  // Afdeling die niet meer bestaat: filter loslaten.
+  useEffect(() => {
+    if (team && !teams.includes(team)) setTeam(null);
+  }, [team, teams]);
+
+  const visible = useMemo(
+    () => bots.filter((b) => (!favoritesOnly || b.favorite) && (!team || b.team === team)),
+    [bots, favoritesOnly, team],
+  );
   const index = Math.max(0, visible.findIndex((b) => b.id === activeId));
   const active = visible[index];
 
@@ -50,25 +90,28 @@ export default function App() {
     (id: string) => {
       const to = bots.findIndex((b) => b.id === id);
       const from = bots.findIndex((b) => b.id === activeId);
-      if (favoritesOnly && !bots[to]?.favorite) setFavoritesOnly(false);
+      const bot = bots[to];
+      if (favoritesOnly && !bot?.favorite) setFavoritesOnly(false);
+      if (team && bot && bot.team !== team) setTeam(null);
       setDirection(to >= from ? 1 : -1);
       setActiveId(id);
       setSearchOpen(false);
     },
-    [bots, activeId, favoritesOnly, setActiveId],
+    [bots, activeId, favoritesOnly, team, setActiveId],
   );
 
-  const addAndShow = useCallback(
-    (drafts: BotDraft[]) => {
-      const ids = store.addBots(drafts);
-      if (ids.length) {
-        setDirection(1);
-        setFavoritesOnly(false);
-        setActiveId(ids[0]);
-      }
+  const showFirst = useCallback(
+    (id: string | null | undefined) => {
+      if (!id) return;
+      setDirection(1);
+      setFavoritesOnly(false);
+      setTeam(null);
+      setActiveId(id);
     },
-    [store, setActiveId],
+    [setActiveId],
   );
+
+  const addAndShow = useCallback((drafts: BotDraft[]) => showFirst(store.addBots(drafts)[0]), [store, showFirst]);
 
   const overlayOpen = searchOpen || managerOpen || importOpen || setupOpen || editing !== null || !brand;
 
@@ -119,13 +162,13 @@ export default function App() {
   const lastWheel = useRef(0);
   const onWheel = (e: WheelEvent) => {
     if (overlayOpen || Math.abs(e.deltaY) < 18) return;
+    if ((e.target as HTMLElement).closest('.rail')) return; // in de lijst links gewoon scrollen
     const now = performance.now();
     if (now - lastWheel.current < 650) return;
     lastWheel.current = now;
     step(e.deltaY > 0 ? 1 : -1);
   };
 
-  const teams = useMemo(() => [...new Set(bots.map((b) => b.team))], [bots]);
   const teamIndex = useMemo(() => {
     if (!active) return { pos: 0, total: 0 };
     const same = visible.filter((b) => b.team === active.team);
@@ -136,7 +179,10 @@ export default function App() {
 
   useEffect(() => {
     document.title = brand ? `Bot Manager · ${brand.name}` : 'Bot Manager';
-  }, [brand]);
+    document.documentElement.lang = settings.language;
+  }, [brand, settings.language]);
+
+  const filtered = favoritesOnly || team;
 
   return (
     <div className="app" onWheel={onWheel} style={{ '--accent': accent } as CSSProperties}>
@@ -145,13 +191,20 @@ export default function App() {
         brand={brand}
         favoritesOnly={favoritesOnly}
         favoriteCount={bots.filter((b) => b.favorite).length}
+        teams={teams}
+        team={team}
+        onTeam={setTeam}
         onToggleFavorites={() => setFavoritesOnly((v) => !v)}
         onSearch={() => setSearchOpen(true)}
         onManage={() => setManagerOpen(true)}
       />
 
       {!brand ? (
-        <Onboarding onDone={store.setBrand} />
+        <Onboarding
+          onDone={store.setBrand}
+          language={settings.language}
+          onLanguage={(language) => store.setSettings((s) => ({ ...s, language }))}
+        />
       ) : active ? (
         <main className="main">
           <Rail bots={visible} activeId={active.id} onSelect={select} />
@@ -177,26 +230,34 @@ export default function App() {
       ) : (
         <main className="main empty-state">
           <div>
-            <h1>{favoritesOnly ? 'Nog geen favorieten' : 'Nog geen bots'}</h1>
+            <h1>{filtered && bots.length ? (favoritesOnly ? t('Nog geen favorieten') : t('Geen bots in deze afdeling')) : t('Nog geen bots')}</h1>
             <p>
-              {favoritesOnly
-                ? 'Markeer een bot met de ster of druk op F.'
-                : 'Laat Grok al je bots in één keer instellen, of plak hun links.'}
+              {filtered && bots.length
+                ? favoritesOnly
+                  ? t('Markeer een bot met de ster of druk op F.')
+                  : t('Kies een andere afdeling bovenaan.')
+                : t('Laat Grok al je bots in één keer instellen, of plak hun links.')}
             </p>
-            {favoritesOnly ? (
-              <button className="btn" onClick={() => setFavoritesOnly(false)}>
-                Toon alle bots
+            {filtered && bots.length ? (
+              <button
+                className="btn"
+                onClick={() => {
+                  setFavoritesOnly(false);
+                  setTeam(null);
+                }}
+              >
+                {t('Toon alle bots')}
               </button>
             ) : (
               <div className="row center">
                 <button className="btn btn-primary" onClick={() => setSetupOpen(true)}>
-                  <Sparkle width={16} height={16} /> Automatisch instellen met Grok
+                  <Sparkle width={16} height={16} /> {t('Automatisch instellen met Grok')}
                 </button>
                 <button className="btn" onClick={() => setImportOpen(true)}>
-                  <Link width={16} height={16} /> Grok-links plakken
+                  <Link width={16} height={16} /> {t('Grok-links plakken')}
                 </button>
                 <button className="btn" onClick={() => setEditing({ mode: 'new' })}>
-                  <Plus width={16} height={16} /> Zelf een bot maken
+                  <Plus width={16} height={16} /> {t('Zelf een bot maken')}
                 </button>
               </div>
             )}
@@ -204,12 +265,15 @@ export default function App() {
         </main>
       )}
 
+      <UpdateNotice status={updates.status} />
+
       <AnimatePresence>
         {searchOpen && <SearchPalette key="search" bots={bots} onSelect={select} onClose={() => setSearchOpen(false)} />}
         {managerOpen && !editing && !importOpen && !setupOpen && (
           <Manager
             key="manager"
             store={store}
+            update={updates}
             onEdit={(id) => setEditing({ mode: 'edit', id })}
             onNew={() => setEditing({ mode: 'new' })}
             onGrokImport={() => setImportOpen(true)}
@@ -221,6 +285,7 @@ export default function App() {
             onLogout={() => {
               store.logout();
               setFavoritesOnly(false);
+              setTeam(null);
               setManagerOpen(false);
             }}
             onClose={() => setManagerOpen(false)}
@@ -245,12 +310,7 @@ export default function App() {
             existing={bots}
             onClose={() => setSetupOpen(false)}
             onApply={(items, opts) => {
-              const res = store.applySetup(items, opts);
-              if (res.firstId) {
-                setDirection(1);
-                setFavoritesOnly(false);
-                setActiveId(res.firstId);
-              }
+              showFirst(store.applySetup(items, opts).firstId);
               setSetupOpen(false);
               setManagerOpen(false);
             }}

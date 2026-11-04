@@ -55,6 +55,13 @@ export function parseGrokLinks(text: string): { links: ParsedLink[]; ignored: st
   return { links, ignored };
 }
 
+/** Een echte link naar een bot, niet alleen de startpagina van Grok. */
+export function hasBotLink(url: string) {
+  if (!url || !/^https?:\/\//i.test(url)) return false;
+  const n = normalizeUrl(url);
+  return !['grok.com', 'x.ai', 'grok.x.ai', 'x.com/i/grok'].includes(n);
+}
+
 /** Om dubbele links te herkennen: zonder https, www, slash op het einde en hoofdletters. */
 export function normalizeUrl(url: string) {
   return url.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '');

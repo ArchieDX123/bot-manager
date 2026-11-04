@@ -49,6 +49,8 @@ jobs:
             app/release/*.exe
             app/release/*.dmg
             app/release/*.zip
+            app/release/latest*.yml
+            app/release/*.blockmap
           if-no-files-found: error
 
       - name: Toevoegen aan release
@@ -59,3 +61,5 @@ jobs:
             app/release/*.exe
             app/release/*.dmg
             app/release/*.zip
+            app/release/latest*.yml
+            app/release/*.blockmap

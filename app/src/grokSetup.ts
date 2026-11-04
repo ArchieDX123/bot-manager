@@ -30,6 +30,30 @@ export const SETUP_PROMPT = `Ik gebruik de app Bot Manager om al mijn Grok-bots 
 
 Regels: neem alle bots van de screenshot op, verzin er geen bij, en schrijf in het Nederlands.`;
 
+export const SETUP_PROMPT_EN = `I use the Bot Manager app to show all my Grok bots in one clear overview. Attached to this message is a screenshot of my list of bots.
+
+1. First write a short overview "Bots per team": group the bots by team and describe in one sentence what each bot does. Use what you know about each bot and what you see on the screenshot.
+
+2. Then give exactly one code block with JSON in this format. Keep the bots in the same order as on the screenshot, from top to bottom:
+
+\`\`\`json
+{
+  "bots": [
+    {
+      "name": "name exactly as on the screenshot",
+      "team": "team name, e.g. Management, Sales, Marketing",
+      "role": "function in at most 5 words",
+      "description": "what the bot does, in 1 or 2 short sentences",
+      "tags": ["2 to 4 short keywords"],
+      "color": "colour of the icon as a hex code, e.g. #22C267",
+      "shape": "star, blob, circle, pill, cloud, flower, hexagon, egg or heart"
+    }
+  ]
+}
+\`\`\`
+
+Rules: include every bot on the screenshot, do not invent any, and write in English.`;
+
 export interface SetupItem {
   name: string;
   team: string;

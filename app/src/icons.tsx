@@ -37,6 +37,16 @@ export const Gear = (p: P) => (
 );
 export const ArrowUp = (p: P) => <svg {...base(p)}><path d="M12 19V5M6 11l6-6 6 6" /></svg>;
 export const ArrowDown = (p: P) => <svg {...base(p)}><path d="M12 5v14M6 13l6 6 6-6" /></svg>;
+export const Grip = (p: P) => (
+  <svg {...base(p)} fill="currentColor" stroke="none">
+    <circle cx="9" cy="6" r="1.4" />
+    <circle cx="15" cy="6" r="1.4" />
+    <circle cx="9" cy="12" r="1.4" />
+    <circle cx="15" cy="12" r="1.4" />
+    <circle cx="9" cy="18" r="1.4" />
+    <circle cx="15" cy="18" r="1.4" />
+  </svg>
+);
 export const Sparkle = (p: P) => (
   <svg {...base(p)}>
     <path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z" />

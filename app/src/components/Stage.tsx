@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { Bot } from '../types';
 import { BotFace } from './BotFace';
 import { ChevronDown, ChevronUp } from '../icons';
+import { useT } from '../i18n';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -19,6 +20,7 @@ interface Props {
 
 /** Links: de grote cirkel met de bot, pijltjes erboven en eronder. */
 export function Stage({ bot, direction, tracking, onPrev, onNext, canPrev, canNext, teamIndex }: Props) {
+  const t = useT();
   return (
     <section className="stage">
       <div className="team-panel glass">
@@ -31,7 +33,7 @@ export function Stage({ bot, direction, tracking, onPrev, onNext, canPrev, canNe
             exit={{ opacity: 0, y: direction * -10 }}
             transition={{ duration: 0.35, ease: EASE }}
           >
-            <span className="eyebrow">Afdeling</span>
+            <span className="eyebrow">{t('Afdeling')}</span>
             <span className="team-name">{bot.team}</span>
           </motion.div>
         </AnimatePresence>
@@ -42,7 +44,7 @@ export function Stage({ bot, direction, tracking, onPrev, onNext, canPrev, canNe
         </span>
       </div>
 
-      <button className="nav-btn" onClick={onPrev} disabled={!canPrev} aria-label="Vorige bot (pijl omhoog)">
+      <button className="nav-btn" onClick={onPrev} disabled={!canPrev} aria-label={t('Vorige bot (pijl omhoog)')}>
         <ChevronUp width={22} height={22} />
       </button>
 
@@ -69,7 +71,7 @@ export function Stage({ bot, direction, tracking, onPrev, onNext, canPrev, canNe
         </div>
       </div>
 
-      <button className="nav-btn" onClick={onNext} disabled={!canNext} aria-label="Volgende bot (pijl omlaag)">
+      <button className="nav-btn" onClick={onNext} disabled={!canNext} aria-label={t('Volgende bot (pijl omlaag)')}>
         <ChevronDown width={22} height={22} />
       </button>
     </section>

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState, type ClipboardEvent, type DragEvent } fro
 import { motion } from 'framer-motion';
 import type { Bot, BotDraft } from '../types';
 import { SHAPE_KEYS, SWATCHES } from '../shapes';
-import { SETUP_PROMPT, nameKey, parseSetupAnswer, type SetupItem } from '../grokSetup';
+import { SETUP_PROMPT, SETUP_PROMPT_EN, nameKey, parseSetupAnswer, type SetupItem } from '../grokSetup';
+import { useLang, useT } from '../i18n';
 import { detectBots, type DetectedBot } from '../screenshot';
 import { BotIcon } from './BotFace';
 import { Close } from '../icons';
@@ -17,6 +18,8 @@ const isMac = typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform
 
 /** Alle bots in één keer instellen: screenshot + prompt in Grok, antwoord terug in de app. */
 export function GrokSetup({ existing, onApply, onClose }: Props) {
+  const t = useT();
+  const prompt = useLang() === 'en' ? SETUP_PROMPT_EN : SETUP_PROMPT;
   const [copied, setCopied] = useState(false);
   const [answer, setAnswer] = useState('');
   const [shot, setShot] = useState<string | null>(null);
@@ -29,7 +32,7 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
     try {
       return { items: parseSetupAnswer(answer), error: null };
     } catch (e) {
-      return { items: [], error: e instanceof Error ? e.message : 'Antwoord kon niet gelezen worden.' };
+      return { items: [], error: t(e instanceof Error ? e.message : 'Antwoord kon niet gelezen worden.') };
     }
   }, [answer]);
 
@@ -42,7 +45,7 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
     let cancelled = false;
     detectBots(shot)
       .then((d) => !cancelled && (setDetected(d), setShotError(null)))
-      .catch((e) => !cancelled && setShotError(e instanceof Error ? e.message : 'Screenshot kon niet gelezen worden.'));
+      .catch((e) => !cancelled && setShotError(t(e instanceof Error ? e.message : 'Screenshot kon niet gelezen worden.')));
     return () => {
       cancelled = true;
     };
@@ -69,10 +72,10 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(SETUP_PROMPT);
+      await navigator.clipboard.writeText(prompt);
     } catch {
       const ta = document.createElement('textarea');
-      ta.value = SETUP_PROMPT;
+      ta.value = prompt;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand('copy');
@@ -111,11 +114,11 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
         exit={{ y: 12, opacity: 0 }}
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         role="dialog"
-        aria-label="Automatisch instellen met Grok"
+        aria-label={t('Automatisch instellen met Grok')}
       >
         <div className="modal-head">
-          <h2>Automatisch instellen met Grok</h2>
-          <button type="button" className="icon-btn" onClick={onClose} aria-label="Sluiten">
+          <h2>{t('Automatisch instellen met Grok')}</h2>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label={t('Sluiten')}>
             <Close />
           </button>
         </div>
@@ -124,12 +127,12 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
           <li className="setup-step">
             <span className="step-no mono">01</span>
             <div className="step-body">
-              <h3>Neem een screenshot van al je bots</h3>
+              <h3>{t('Neem een screenshot van al je bots')}</h3>
               <p>
-                Open Grok en zorg dat je volledige lijst met bots in één keer zichtbaar is. Maak er een screenshot van met{' '}
+                {t('Open Grok en zorg dat je volledige lijst met bots in één keer zichtbaar is. Maak er een screenshot van met')}{' '}
                 <kbd>{isMac ? '⌘' : 'Win'}</kbd> <kbd>Shift</kbd> <kbd>{isMac ? '4' : 'S'}</kbd>.
               </p>
-              <p className="muted small">Past niet alles? Zoom uit met <kbd>{isMac ? '⌘' : 'Ctrl'}</kbd> <kbd>−</kbd>.</p>
+              <p className="muted small">{t('Past niet alles? Zoom uit met')} <kbd>{isMac ? '⌘' : 'Ctrl'}</kbd> <kbd>−</kbd>.</p>
             </div>
             <ScreenshotIllustration />
           </li>
@@ -137,15 +140,14 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
           <li className="setup-step">
             <span className="step-no mono">02</span>
             <div className="step-body">
-              <h3>Steek deze prompt in je Grok-bot</h3>
+              <h3>{t('Steek deze prompt in je Grok-bot')}</h3>
               <p>
-                Plak de prompt én de screenshot in een gesprek met een bot die je andere bots kent, bijvoorbeeld je CEO-bot.
-                Grok maakt dan een overzicht van wie wat doet.
+                {t('Plak de prompt én de screenshot in een gesprek met een bot die je andere bots kent, bijvoorbeeld je CEO-bot. Grok maakt dan een overzicht van wie wat doet.')}
               </p>
               <div className="prompt-box">
-                <pre className="mono">{SETUP_PROMPT}</pre>
+                <pre className="mono">{prompt}</pre>
                 <button type="button" className={`btn sm ${copied ? 'is-done' : 'btn-primary'}`} onClick={copy}>
-                  {copied ? 'Gekopieerd ✓' : 'Kopieer prompt'}
+                  {copied ? t('Gekopieerd ✓') : t('Kopieer prompt')}
                 </button>
               </div>
             </div>
@@ -154,11 +156,11 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
           <li className="setup-step">
             <span className="step-no mono">03</span>
             <div className="step-body">
-              <h3>Plak het antwoord van Grok hier</h3>
-              <p>Kopieer het volledige antwoord, inclusief het codeblok. De app leest het en stelt al je bots in.</p>
+              <h3>{t('Plak het antwoord van Grok hier')}</h3>
+              <p>{t('Kopieer het volledige antwoord, inclusief het codeblok. De app leest het en stelt al je bots in.')}</p>
               <div className="fields single">
                 <label>
-                  Antwoord van Grok
+                  {t('Antwoord van Grok')}
                   <textarea
                     rows={4}
                     value={answer}
@@ -177,7 +179,7 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
               >
                 {shot ? (
                   <span className="shot-preview">
-                    <img src={shot} alt="Jouw screenshot" />
+                    <img src={shot} alt={t('Jouw screenshot')} />
                     {detected?.map((d, i) => (
                       <i
                         key={i}
@@ -194,17 +196,16 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
                 <span className="dropzone-text">
                   {shot
                     ? detected
-                      ? `${detected.length} icoontjes herkend. Klik om een andere screenshot te kiezen.`
-                      : 'Screenshot lezen…'
-                    : 'Optioneel: sleep je screenshot hierheen, plak hem met Ctrl+V of klik om te kiezen. Dan neemt de app de exacte kleuren over.'}
+                      ? t('{n} icoontjes herkend. Klik om een andere screenshot te kiezen.', { n: detected.length })
+                      : t('Screenshot lezen…')
+                    : t('Optioneel: sleep je screenshot hierheen, plak hem met Ctrl+V of klik om te kiezen. Dan neemt de app de exacte kleuren over.')}
                 </span>
                 <input type="file" accept="image/*" onChange={(e) => (readFile(e.target.files?.[0]), (e.target.value = ''))} />
               </label>
               {shotError && <p className="note err">{shotError}</p>}
               {detected && parsed.items.length > 0 && !useShotColors && (
                 <p className="note muted">
-                  Op de screenshot zie ik {detected.length} icoontjes en Grok noemt {parsed.items.length} bots. Ik gebruik de kleuren
-                  die Grok opgeeft.
+                  {t('Op de screenshot zie ik {a} icoontjes en Grok noemt {b} bots. Ik gebruik de kleuren die Grok opgeeft.', { a: detected.length, b: parsed.items.length })}
                 </p>
               )}
             </div>
@@ -214,7 +215,7 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
         {drafts.length > 0 && (
           <section className="setup-result">
             <h3 className="eyebrow">
-              Klaar om in te stellen: {drafts.length} bots ({news} nieuw, {updates} bijwerken)
+              {t('Klaar om in te stellen: {n} bots ({a} nieuw, {b} bijwerken)', { n: drafts.length, a: news, b: updates })}
             </h3>
             <ul className="import-list setup-list">
               {drafts.map((d) => {
@@ -226,7 +227,7 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
                       {d.name}
                       <small>{[d.team, d.role].filter(Boolean).join(' · ')}</small>
                     </span>
-                    <span className={`badge mono ${known ? '' : 'is-new'}`}>{known ? 'bijwerken' : 'nieuw'}</span>
+                    <span className={`badge mono ${known ? '' : 'is-new'}`}>{known ? t('bijwerken') : t('nieuw')}</span>
                   </li>
                 );
               })}
@@ -234,21 +235,21 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
             <div className="row">
               <label className="toggle">
                 <input type="checkbox" checked={update} onChange={(e) => setUpdate(e.target.checked)} />
-                Bestaande bots bijwerken (Grok-links en favorieten blijven)
+                {t('Bestaande bots bijwerken (Grok-links en favorieten blijven)')}
               </label>
               <label className="toggle">
                 <input type="checkbox" checked={reorder} onChange={(e) => setReorder(e.target.checked)} />
-                Volgorde van Grok overnemen
+                {t('Volgorde van Grok overnemen')}
               </label>
             </div>
           </section>
         )}
 
         <div className="modal-foot">
-          <span className="muted small">Je screenshot blijft op deze computer.</span>
+          <span className="muted small">{t('Je screenshot blijft op deze computer.')}</span>
           <span className="spacer" />
           <button type="button" className="btn" onClick={onClose}>
-            Annuleren
+            {t('Annuleren')}
           </button>
           <button
             type="button"
@@ -256,7 +257,7 @@ export function GrokSetup({ existing, onApply, onClose }: Props) {
             disabled={!drafts.length}
             onClick={() => onApply(drafts, { update, reorder })}
           >
-            {drafts.length ? `${drafts.length} bots instellen` : 'Bots instellen'}
+            {drafts.length ? t('{n} bots instellen', { n: drafts.length }) : t('Bots instellen')}
           </button>
         </div>
       </motion.div>
@@ -275,7 +276,7 @@ function ScreenshotIllustration() {
     { c: '#16B39E', s: 'squircle' as const, w: 52 },
   ];
   return (
-    <svg className="setup-illustration" viewBox="0 0 220 200" role="img" aria-label="Voorbeeld: screenshot van de botlijst in Grok">
+    <svg className="setup-illustration" viewBox="0 0 220 200" role="img" aria-label={useT()('Voorbeeld: screenshot van de botlijst in Grok')}>
       <rect x="20" y="10" width="180" height="180" rx="12" fill="#17191d" stroke="#ffffff1a" />
       <rect x="32" y="20" width="60" height="7" rx="3.5" fill="#ffffff26" />
       {rows.map((r, i) => {

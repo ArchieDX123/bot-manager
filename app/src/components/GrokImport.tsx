@@ -5,6 +5,7 @@ import { SHAPE_KEYS, SWATCHES } from '../shapes';
 import { normalizeUrl, parseGrokLinks } from '../grok';
 import { BotIcon } from './BotFace';
 import { Close } from '../icons';
+import { useT } from '../i18n';
 
 interface Props {
   existing: Bot[];
@@ -24,6 +25,7 @@ Social Media Manager - https://grok.com/bot/…`;
 
 /** Meerdere Grok-links tegelijk plakken en er bots van maken. */
 export function GrokImport({ existing, teams, onAdd, onClose }: Props) {
+  const t = useT();
   const [text, setText] = useState('');
   const [names, setNames] = useState<Record<string, string>>({});
   const [team, setTeam] = useState('Grok-bots');
@@ -74,24 +76,24 @@ export function GrokImport({ existing, teams, onAdd, onClose }: Props) {
         exit={{ y: 12, opacity: 0 }}
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         role="dialog"
-        aria-label="Bots uit Grok toevoegen"
+        aria-label={t('Grok-links plakken')}
       >
         <div className="modal-head">
-          <h2>Bots uit Grok toevoegen</h2>
-          <button type="button" className="icon-btn" onClick={onClose} aria-label="Sluiten">
+          <h2>{t('Grok-links plakken')}</h2>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label={t('Sluiten')}>
             <Close />
           </button>
         </div>
 
         <ol className="steps">
-          <li>Open je bot in Grok en kopieer de link uit de adresbalk (of via Delen).</li>
-          <li>Plak hieronder één of meer links. Zet er gerust de naam voor: <span className="mono">Naam - link</span></li>
-          <li>Controleer de namen en klik op toevoegen. Taak en beschrijving vul je later aan.</li>
+          <li>{t('Open je bot in Grok en kopieer de link uit de adresbalk (of via Delen).')}</li>
+          <li>{t('Plak hieronder één of meer links. Zet er gerust de naam voor:')} <span className="mono">{t('Naam - link')}</span></li>
+          <li>{t('Controleer de namen en klik op toevoegen. Taak en beschrijving vul je later aan.')}</li>
         </ol>
 
         <div className="fields single">
           <label>
-            Links
+            {t('Links')}
             <textarea
               ref={area}
               rows={5}
@@ -99,7 +101,7 @@ export function GrokImport({ existing, teams, onAdd, onClose }: Props) {
               onChange={(e) => setText(e.target.value)}
               placeholder={EXAMPLE}
               spellCheck={false}
-              aria-label="Grok-links"
+              aria-label={t('Grok-links')}
             />
           </label>
         </div>
@@ -116,11 +118,11 @@ export function GrokImport({ existing, teams, onAdd, onClose }: Props) {
                       value={r.name}
                       onChange={(e) => setNames((n) => ({ ...n, [r.url]: e.target.value }))}
                       placeholder={r.duplicate ? '' : `Grok-bot ${existing.length + freshIndex + 1}`}
-                      aria-label="Naam van de bot"
+                      aria-label={t('Naam van de bot')}
                       disabled={r.duplicate}
                     />
                     <span className="import-url mono" title={r.url}>
-                      {r.duplicate ? 'staat al in je lijst' : r.url.replace(/^https?:\/\/(www\.)?/, '')}
+                      {r.duplicate ? t('staat al in je lijst') : r.url.replace(/^https?:\/\/(www\.)?/, '')}
                     </span>
                   </li>
                 );
@@ -128,7 +130,7 @@ export function GrokImport({ existing, teams, onAdd, onClose }: Props) {
             </ul>
             <div className="fields single">
               <label>
-                Afdeling voor deze bots
+                {t('Afdeling voor deze bots')}
                 <input value={team} onChange={(e) => setTeam(e.target.value)} list="import-teams" />
                 <datalist id="import-teams">
                   {teams.map((t) => (
@@ -139,24 +141,24 @@ export function GrokImport({ existing, teams, onAdd, onClose }: Props) {
             </div>
           </>
         )}
-        {text.trim() && !rows.length && <p className="note err">Geen Grok-links gevonden. Links beginnen met https://grok.com/…</p>}
+        {text.trim() && !rows.length && <p className="note err">{t('Geen Grok-links gevonden. Links beginnen met https://grok.com/…')}</p>}
         {ignored.length > 0 && (
           <p className="note muted">
-            {ignored.length} {ignored.length === 1 ? 'link is' : 'links zijn'} overgeslagen omdat ze niet van Grok zijn.
+            {ignored.length === 1 ? t('1 link is overgeslagen omdat hij niet van Grok is.') : t('{n} links zijn overgeslagen omdat ze niet van Grok zijn.', { n: ignored.length })}
           </p>
         )}
 
         <p className="note muted small">
-          Grok biedt nog geen officiële manier om al je bots automatisch op te halen. Daarom werkt dit met links.
+          {t('Grok biedt nog geen officiële manier om al je bots automatisch op te halen. Daarom werkt dit met links.')}
         </p>
 
         <div className="modal-foot">
           <span className="spacer" />
           <button type="button" className="btn" onClick={onClose}>
-            Annuleren
+            {t('Annuleren')}
           </button>
           <button type="button" className="btn btn-primary" disabled={!fresh.length} onClick={submit}>
-            {fresh.length === 1 ? '1 bot toevoegen' : `${fresh.length} bots toevoegen`}
+            {fresh.length === 1 ? t('1 bot toevoegen') : t('{n} bots toevoegen', { n: fresh.length })}
           </button>
         </div>
       </motion.div>
