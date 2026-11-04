@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bot Manager · Downloaden</title>
+    <meta name="description" content="Download Bot Manager voor Windows of Mac: al je Grok-bots overzichtelijk op één plek." />
+    <link rel="icon" href="icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #0b0d10;
+        --ink-2: #12151a;
+        --paper: #f4f2ee;
+        --muted: #8a8f98;
+        --line: rgba(244, 242, 238, 0.08);
+        --line-2: rgba(244, 242, 238, 0.14);
+        --accent: #22c267;
+        --font: 'Inter Tight', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; }
+      body {
+        background: var(--ink);
+        color: var(--paper);
+        font-family: var(--font);
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        background-image:
+          radial-gradient(60% 50% at 30% 20%, rgba(34, 194, 103, 0.12), transparent 70%),
+          linear-gradient(to right, var(--line) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+        background-size: auto, 64px 64px, 64px 64px;
+        background-attachment: fixed;
+      }
+      a { color: inherit; }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+      header { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
+      .brand { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+      header a { font-size: 14px; color: var(--muted); text-decoration: none; }
+      header a:hover { color: var(--paper); }
+
+      .hero { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center; padding: 56px 0 40px; }
+      h1 { font-size: clamp(40px, 6vw, 68px); line-height: 0.98; letter-spacing: -0.035em; font-weight: 600; margin: 0 0 18px; }
+      .lead { font-size: 18px; color: rgba(244, 242, 238, 0.75); max-width: 46ch; margin: 0 0 30px; }
+      .face { width: 100%; aspect-ratio: 1; border-radius: 50%; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.11);
+        background: linear-gradient(160deg, #ffffff17, #ffffff06); box-shadow: inset 0 1px #ffffff14, 0 30px 80px -30px #000; }
+      .face svg { width: 100%; height: 100%; overflow: visible; }
+
+      .download { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .btn { display: inline-flex; align-items: center; gap: 10px; height: 54px; padding: 0 26px; border-radius: 14px; font-weight: 600;
+        font-size: 17px; text-decoration: none; border: 1px solid var(--line-2); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; }
+      .btn-primary { background: var(--paper); color: var(--ink); border-color: transparent; box-shadow: 0 14px 40px -14px var(--accent); }
+      .btn-primary:hover { transform: translateY(-1px); background: #fff; box-shadow: 0 18px 44px -12px var(--accent); }
+      .btn svg { width: 20px; height: 20px; }
+      .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 14px; }
+      .meta a { color: var(--muted); }
+      .meta a:hover { color: var(--paper); }
+
+      section { padding: 40px 0; border-top: 1px solid var(--line); }
+      h2 { font-size: 26px; letter-spacing: -0.02em; font-weight: 600; margin: 0 0 6px; }
+      .sub { color: var(--muted); margin: 0 0 28px; }
+      .tabs { display: inline-flex; padding: 4px; border: 1px solid var(--line-2); border-radius: 12px; gap: 2px; margin-bottom: 26px; }
+      .tabs button { font: inherit; font-size: 14px; color: var(--muted); background: none; border: 0; height: 34px; padding: 0 16px; border-radius: 9px; cursor: pointer; }
+      .tabs button[aria-selected='true'] { background: rgba(255, 255, 255, 0.08); color: var(--paper); }
+      .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .step { border: 1px solid var(--line-2); border-radius: 18px; padding: 20px; background: rgba(255, 255, 255, 0.025); display: flex; flex-direction: column; gap: 14px; }
+      .no { font-family: var(--mono); font-size: 12px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line-2); }
+      .step h3 { margin: 0; font-size: 17px; font-weight: 600; }
+      .step p { margin: 0; font-size: 14px; color: rgba(244, 242, 238, 0.72); }
+      .step b { color: var(--paper); font-weight: 600; }
+      .mock { margin-top: auto; border-radius: 10px; overflow: hidden; border: 1px solid var(--line-2); font-size: 12px; }
+      .win-dialog { background: #1f4e8c; color: #fff; padding: 14px 14px 12px; }
+      .win-dialog strong { display: block; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+      .win-dialog .row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+      .win-dialog u { text-decoration: underline; }
+      .win-dialog .run { background: #fff; color: #1f4e8c; border-radius: 3px; padding: 4px 10px; font-weight: 600; }
+      .hl { outline: 2px solid #ffd24a; outline-offset: 2px; border-radius: 3px; }
+      .mac-window { background: #2a2b2f; padding: 12px; color: #e8e8ea; }
+      .mac-window .dots { display: flex; gap: 5px; margin-bottom: 10px; }
+      .mac-window .dots i { width: 8px; height: 8px; border-radius: 50%; background: #ff5f57; }
+      .mac-window .dots i:nth-child(2) { background: #febc2e; }
+      .mac-window .dots i:nth-child(3) { background: #28c840; }
+      .drag { display: flex; justify-content: space-around; align-items: center; padding: 8px 0 4px; }
+      .drag span { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; }
+      .drag .folder { width: 38px; height: 30px; border-radius: 5px; background: #4a90e2; }
+      .drag .arrow { font-size: 18px; color: #8a8f98; }
+      .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-top: 1px solid #ffffff14; }
+      .settings-row:first-of-type { border-top: 0; }
+      .mac-btn { background: #3a3b40; border: 1px solid #55565c; border-radius: 5px; padding: 2px 9px; }
+      .mock-app { background: #0b0d10; padding: 14px; display: flex; align-items: center; gap: 12px; }
+      .mock-app svg { width: 46px; height: 46px; flex: none; }
+      .mock-app b { display: block; font-size: 14px; }
+      .mock-app small { color: var(--muted); }
+
+      .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .why div { font-size: 14px; color: rgba(244, 242, 238, 0.72); }
+      .why strong { display: block; color: var(--paper); font-size: 15px; margin-bottom: 4px; }
+      footer { padding: 36px 0 56px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+      .hidden { display: none !important; }
+      .note { font-size: 13px; color: var(--muted); margin: 22px 0 0; max-width: 70ch; }
+
+      @media (max-width: 820px) {
+        .hero { grid-template-columns: 1fr; padding-top: 24px; }
+        .face { width: 200px; justify-self: center; order: -1; }
+        .steps, .why { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="brand">Bot Manager</span>
+        <a href="https://github.com/ArchieDX123/bot-manager">GitHub</a>
+      </header>
+
+      <div class="hero">
+        <div>
+          <h1>Al je Grok-bots op één plek.</h1>
+          <p class="lead">Bot Manager toont al je Grok-assistenten overzichtelijk, met hun functie en een knop om ze te openen. Gratis, en alles blijft op je eigen computer.</p>
+          <div class="download">
+            <a class="btn btn-primary" id="primary" href="https://github.com/ArchieDX123/bot-manager/releases/latest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+              <span id="primary-label">Downloaden</span>
+            </a>
+          </div>
+          <p class="meta" id="meta">
+            <span id="version">Nieuwste versie</span> · <a id="other" href="#">Andere computer?</a>
+          </p>
+        </div>
+        <div class="face" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <path id="blob" fill="#22C267" />
+            <g id="eyes">
+              <ellipse cx="108" cy="88" rx="8.5" ry="13" fill="#141414" />
+              <ellipse cx="140" cy="88" rx="8.5" ry="13" fill="#141414" />
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <section id="install">
+        <h2>Zo installeer je het</h2>
+        <p class="sub">Drie stappen, ongeveer een minuut.</p>
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tab-win" aria-selected="true">Windows</button>
+          <button role="tab" id="tab-mac" aria-selected="false">Mac</button>
+        </div>
+
+        <ol class="steps" id="steps-win">
+          <li class="step">
+            <span class="no">01</span>
+            <h3>Download en open</h3>
+            <p>Klik op <b>Download voor Windows</b> en open daarna <b>Bot-Manager-Setup.exe</b> onderaan je browser of in je map Downloads.</p>
+            <div class="mock mock-app">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#22C267" stroke-width="1.6"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+              <div><b>Bot-Manager-Setup.exe</b><small>Bestand openen</small></div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="no">02</span>
+            <h3>Klik op "Toch uitvoeren"</h3>
+            <p>Windows kent de app nog niet en toont een blauw venster. Klik op <b>Meer info</b> en daarna op <b>Toch uitvoeren</b>. Dat hoeft maar één keer.</p>
+            <div class="mock win-dialog">
+              <strong>Windows heeft uw pc beschermd</strong>
+              <span class="hl"><u>Meer info</u></span>
+              <div class="row"><span>App: Bot-Manager-Setup.exe</span><span class="run hl">Toch uitvoeren</span></div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="no">03</span>
+            <h3>Klaar</h3>
+            <p>Bot Manager installeert zichzelf en start op. Je vindt hem voortaan op je <b>bureaublad</b> en in het <b>Startmenu</b>. Nieuwe versies komen er vanzelf bij.</p>
+            <div class="mock mock-app">
+              <svg viewBox="0 0 200 200"><path class="mini-blob" fill="#F2F2F0" /><ellipse cx="112" cy="90" rx="11" ry="17" fill="#141414" /><ellipse cx="146" cy="90" rx="11" ry="17" fill="#141414" /></svg>
+              <div><b>Bot Manager</b><small>Op je bureaublad</small></div>
+            </div>
+          </li>
+        </ol>
+
+        <ol class="steps hidden" id="steps-mac">
+          <li class="step">
+            <span class="no">01</span>
+            <h3>Download en sleep naar Apps</h3>
+            <p>Klik op <b>Download voor Mac</b>, open <b>Bot-Manager-Mac.dmg</b> en sleep het icoon naar de map <b>Apps</b>.</p>
+            <div class="mock mac-window">
+              <div class="dots"><i></i><i></i><i></i></div>
+              <div class="drag">
+                <span><svg viewBox="0 0 200 200" width="34" height="34"><path class="mini-blob" fill="#22C267" /><ellipse cx="112" cy="90" rx="11" ry="17" fill="#141414" /><ellipse cx="146" cy="90" rx="11" ry="17" fill="#141414" /></svg>Bot Manager</span>
+                <span class="arrow">→</span>
+                <span><i class="folder"></i>Apps</span>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="no">02</span>
+            <h3>Eén keer toestaan</h3>
+            <p>Open de app. macOS meldt dat hij niet gecontroleerd kan worden: klik op <b>Gereed</b>. Ga dan naar <b>Systeeminstellingen → Privacy en beveiliging</b>, scrol naar beneden en klik op <b>Open toch</b>.</p>
+            <div class="mock mac-window">
+              <div class="settings-row"><span>Privacy en beveiliging</span></div>
+              <div class="settings-row"><span>"Bot Manager" is geblokkeerd</span><span class="mac-btn hl">Open toch</span></div>
+            </div>
+          </li>
+          <li class="step">
+            <span class="no">03</span>
+            <h3>Klaar</h3>
+            <p>Bot Manager staat in je map <b>Apps</b> en in Launchpad. Is er een nieuwe versie, dan meldt de app dat met een downloadknop.</p>
+            <div class="mock mock-app">
+              <svg viewBox="0 0 200 200"><path class="mini-blob" fill="#F2F2F0" /><ellipse cx="112" cy="90" rx="11" ry="17" fill="#141414" /><ellipse cx="146" cy="90" rx="11" ry="17" fill="#141414" /></svg>
+              <div><b>Bot Manager</b><small>In Apps en Launchpad</small></div>
+            </div>
+          </li>
+        </ol>
+        <p class="note">Waarom die melding? De app is gratis en (nog) niet betaald ondertekend bij Microsoft of Apple. Daardoor kennen Windows en macOS de maker niet en vragen ze één keer om bevestiging.</p>
+      </section>
+
+      <section>
+        <div class="why">
+          <div><strong>Automatisch instellen</strong>Neem een screenshot van je botlijst, plak één prompt in Grok, en al je bots staan erin.</div>
+          <div><strong>Jouw bedrijf</strong>Eigen naam, logo en kleur. Licht of donker, Nederlands of Engels.</div>
+          <div><strong>Blijft van jou</strong>Alles wordt op je eigen computer bewaard. Geen account nodig.</div>
+        </div>
+      </section>
+
+      <footer>
+        Bot Manager · <a href="https://github.com/ArchieDX123/bot-manager">broncode op GitHub</a> · <a href="https://github.com/ArchieDX123/bot-manager/releases">alle versies</a>
+      </footer>
+    </div>
+
+    <script>
+      const REPO = 'ArchieDX123/bot-manager';
+      const LATEST = `https://github.com/${REPO}/releases/latest/download/`;
+      const FILES = {
+        win: { file: 'Bot-Manager-Setup.exe', label: 'Download voor Windows' },
+        mac: { file: 'Bot-Manager-Mac.dmg', label: 'Download voor Mac' },
+      };
+
+      // Welke computer? (Mac, Windows, of iets anders zoals een telefoon)
+      const ua = navigator.userAgent;
+      const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(ua) || (navigator.maxTouchPoints > 1 && /Mac/.test(platform) && !/Macintosh/.test(ua));
+      let os = /Mac/i.test(platform) || /Macintosh/.test(ua) ? 'mac' : 'win';
+
+      const primary = document.getElementById('primary');
+      const label = document.getElementById('primary-label');
+      const other = document.getElementById('other');
+
+      function setOs(next) {
+        os = next;
+        primary.href = LATEST + FILES[os].file;
+        label.textContent = FILES[os].label;
+        other.textContent = os === 'mac' ? 'Download voor Windows' : 'Download voor Mac';
+        showTab(os);
+      }
+      function showTab(which) {
+        document.getElementById('steps-win').classList.toggle('hidden', which !== 'win');
+        document.getElementById('steps-mac').classList.toggle('hidden', which !== 'mac');
+        document.getElementById('tab-win').setAttribute('aria-selected', which === 'win');
+        document.getElementById('tab-mac').setAttribute('aria-selected', which === 'mac');
+      }
+      other.addEventListener('click', (e) => {
+        e.preventDefault();
+        const to = os === 'mac' ? 'win' : 'mac';
+        window.location.href = LATEST + FILES[to].file;
+      });
+      document.getElementById('tab-win').addEventListener('click', () => showTab('win'));
+      document.getElementById('tab-mac').addEventListener('click', () => showTab('mac'));
+
+      if (isMobile) {
+        label.textContent = 'Werkt op Windows en Mac';
+        primary.href = '#install';
+        document.getElementById('meta').innerHTML = 'Open deze pagina op je computer om te downloaden.';
+      } else {
+        setOs(os);
+      }
+
+      // Versienummer van de nieuwste versie tonen
+      fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => {
+          if (j && j.tag_name) document.getElementById('version').textContent = 'Versie ' + j.tag_name.replace(/^v/, '');
+        })
+        .catch(() => {});
+
+      // Botgezicht (zelfde vorm als in de app) met ogen die de muis volgen
+      function polar(r, steps = 180) {
+        let d = '';
+        for (let i = 0; i <= steps; i++) {
+          const t = (i / steps) * Math.PI * 2, k = r(t);
+          d += (i ? 'L' : 'M') + (100 + Math.cos(t) * k).toFixed(2) + ' ' + (100 + Math.sin(t) * k).toFixed(2);
+        }
+        return d + 'Z';
+      }
+      const blob = polar((t) => 84 * (1 + 0.07 * Math.cos(2 * (t + 0.5)) + 0.04 * Math.cos(3 * t)));
+      document.getElementById('blob').setAttribute('d', blob);
+      document.querySelectorAll('.mini-blob').forEach((p) => p.setAttribute('d', blob));
+      const eyes = document.getElementById('eyes');
+      const face = document.querySelector('.face svg');
+      let tx = 0, ty = 0, x = 0, y = 0;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      addEventListener('pointermove', (e) => {
+        const r = face.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width * 0.62), dy = e.clientY - (r.top + r.height * 0.44);
+        const dist = Math.hypot(dx, dy) || 1, k = Math.min(1, dist / (r.width * 0.9));
+        tx = (dx / dist) * k * 22; ty = (dy / dist) * k * 18;
+      });
+      (function loop() {
+        x += (tx - x) * 0.12; y += (ty - y) * 0.12;
+        eyes.setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
+        if (!reduce) requestAnimationFrame(loop);
+      })();
+    </script>
+  </body>
+</html>

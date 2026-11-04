@@ -57,6 +57,21 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          body: |
+            ## Downloaden
+
+            **Makkelijkste manier:** ga naar de [downloadpagina](https://archiedx123.github.io/bot-manager/) en klik op de grote knop. Die kiest vanzelf de juiste versie en legt de installatie stap voor stap uit.
+
+            Of download hier rechtstreeks:
+
+            | Computer | Bestand |
+            |---|---|
+            | **Windows** | [Bot-Manager-Setup.exe](https://github.com/ArchieDX123/bot-manager/releases/latest/download/Bot-Manager-Setup.exe) |
+            | **Mac** (Apple Silicon en Intel) | [Bot-Manager-Mac.dmg](https://github.com/ArchieDX123/bot-manager/releases/latest/download/Bot-Manager-Mac.dmg) |
+
+            Zie je een waarschuwing? Windows: klik op **Meer info → Toch uitvoeren**. Mac: **Systeeminstellingen → Privacy en beveiliging → Open toch**. Dat hoeft maar één keer.
+
+            <sub>De andere bestanden hieronder (.yml, .blockmap, portable) zijn voor automatische updates en gevorderde gebruikers.</sub>
           files: |
             app/release/*.exe
             app/release/*.dmg

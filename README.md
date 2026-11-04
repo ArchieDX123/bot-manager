@@ -5,7 +5,9 @@ Links staat een grote ronde weergave van de gekozen bot, waarvan de ogen je muis
 
 ## Downloaden
 
-Ga naar **[Releases](../../releases/latest)** en kies het bestand voor jouw computer.
+**👉 [Ga naar de downloadpagina](https://archiedx123.github.io/bot-manager/)**: één knop die vanzelf de juiste versie kiest, met de installatie stap voor stap uitgelegd.
+
+Of kies zelf bij **[Releases](../../releases/latest)**:
 
 ### Windows
 

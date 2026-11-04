@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO = 'ArchieDX123/bot-manager';
-const RELEASES_URL = `https://github.com/${REPO}/releases/latest`;
+const RELEASES_URL = 'https://archiedx123.github.io/bot-manager/';
 
 // Gebruikers van de eerste versie ("Bushing Bot Manager") houden hun bots:
 // bestaat de oude gegevensmap nog en de nieuwe niet, dan blijft de app de oude map gebruiken.
