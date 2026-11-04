@@ -2,7 +2,7 @@
   "name": "bot-manager",
   "productName": "Bot Manager",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Bot Manager: overzicht en beheer van je Grok-assistenten",
   "author": "Bot Manager",
   "type": "module",

@@ -10,7 +10,8 @@ import { BotEditor } from './components/BotEditor';
 import { Manager } from './components/Manager';
 import { GrokImport } from './components/GrokImport';
 import { Onboarding } from './components/Onboarding';
-import { Link, Plus } from './icons';
+import { GrokSetup } from './components/GrokSetup';
+import { Link, Plus, Sparkle } from './icons';
 
 type Editing = { mode: 'new' } | { mode: 'edit'; id: string } | null;
 
@@ -23,6 +24,7 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [setupOpen, setSetupOpen] = useState(false);
   const [editing, setEditing] = useState<Editing>(null);
 
   const visible = useMemo(() => (favoritesOnly ? bots.filter((b) => b.favorite) : bots), [bots, favoritesOnly]);
@@ -68,7 +70,7 @@ export default function App() {
     [store, setActiveId],
   );
 
-  const overlayOpen = searchOpen || managerOpen || importOpen || editing !== null || !brand;
+  const overlayOpen = searchOpen || managerOpen || importOpen || setupOpen || editing !== null || !brand;
 
   // Toetsenbord
   useEffect(() => {
@@ -76,6 +78,7 @@ export default function App() {
       if (e.key === 'Escape') {
         if (editing) setEditing(null);
         else if (importOpen) setImportOpen(false);
+        else if (setupOpen) setSetupOpen(false);
         else if (searchOpen) setSearchOpen(false);
         else setManagerOpen(false);
         return;
@@ -110,7 +113,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [step, overlayOpen, active, store, editing, importOpen, searchOpen]);
+  }, [step, overlayOpen, active, store, editing, importOpen, setupOpen, searchOpen]);
 
   // Muiswiel: één bot per scrollbeweging.
   const lastWheel = useRef(0);
@@ -178,7 +181,7 @@ export default function App() {
             <p>
               {favoritesOnly
                 ? 'Markeer een bot met de ster of druk op F.'
-                : 'Plak de links van je Grok-bots, dan staan ze meteen in je overzicht.'}
+                : 'Laat Grok al je bots in één keer instellen, of plak hun links.'}
             </p>
             {favoritesOnly ? (
               <button className="btn" onClick={() => setFavoritesOnly(false)}>
@@ -186,8 +189,11 @@ export default function App() {
               </button>
             ) : (
               <div className="row center">
-                <button className="btn btn-primary" onClick={() => setImportOpen(true)}>
-                  <Link width={16} height={16} /> Bots uit Grok toevoegen
+                <button className="btn btn-primary" onClick={() => setSetupOpen(true)}>
+                  <Sparkle width={16} height={16} /> Automatisch instellen met Grok
+                </button>
+                <button className="btn" onClick={() => setImportOpen(true)}>
+                  <Link width={16} height={16} /> Grok-links plakken
                 </button>
                 <button className="btn" onClick={() => setEditing({ mode: 'new' })}>
                   <Plus width={16} height={16} /> Zelf een bot maken
@@ -200,13 +206,14 @@ export default function App() {
 
       <AnimatePresence>
         {searchOpen && <SearchPalette key="search" bots={bots} onSelect={select} onClose={() => setSearchOpen(false)} />}
-        {managerOpen && !editing && !importOpen && (
+        {managerOpen && !editing && !importOpen && !setupOpen && (
           <Manager
             key="manager"
             store={store}
             onEdit={(id) => setEditing({ mode: 'edit', id })}
             onNew={() => setEditing({ mode: 'new' })}
             onGrokImport={() => setImportOpen(true)}
+            onGrokSetup={() => setSetupOpen(true)}
             onSelect={(id) => {
               select(id);
               setManagerOpen(false);
@@ -228,6 +235,23 @@ export default function App() {
             onAdd={(drafts) => {
               addAndShow(drafts);
               setImportOpen(false);
+              setManagerOpen(false);
+            }}
+          />
+        )}
+        {setupOpen && (
+          <GrokSetup
+            key="setup"
+            existing={bots}
+            onClose={() => setSetupOpen(false)}
+            onApply={(items, opts) => {
+              const res = store.applySetup(items, opts);
+              if (res.firstId) {
+                setDirection(1);
+                setFavoritesOnly(false);
+                setActiveId(res.firstId);
+              }
+              setSetupOpen(false);
               setManagerOpen(false);
             }}
           />

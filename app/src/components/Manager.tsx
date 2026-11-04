@@ -2,20 +2,21 @@ import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Store, ImportMode } from '../store';
 import { BrandForm } from './BrandForm';
-import { ArrowDown, ArrowUp, Close, Download, Link, Logout, Pencil, Plus, Star, Trash, Upload } from '../icons';
+import { ArrowDown, ArrowUp, Close, Download, Link, Logout, Pencil, Plus, Sparkle, Star, Trash, Upload } from '../icons';
 
 interface Props {
   store: Store;
   onEdit: (id: string) => void;
   onNew: () => void;
   onGrokImport: () => void;
+  onGrokSetup: () => void;
   onSelect: (id: string) => void;
   onLogout: () => void;
   onClose: () => void;
 }
 
 /** Zijpaneel om bots, bedrijfsgegevens, back-ups en weergave te beheren. */
-export function Manager({ store, onEdit, onNew, onGrokImport, onSelect, onLogout, onClose }: Props) {
+export function Manager({ store, onEdit, onNew, onGrokImport, onGrokSetup, onSelect, onLogout, onClose }: Props) {
   const { bots, brand, setBrand, settings, setSettings } = store;
   const fileInput = useRef<HTMLInputElement>(null);
   const [note, setNote] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
@@ -53,16 +54,19 @@ export function Manager({ store, onEdit, onNew, onGrokImport, onSelect, onLogout
           </button>
         </div>
 
+        <button className="btn btn-primary wide" onClick={onGrokSetup}>
+          <Sparkle width={16} height={16} /> Automatisch instellen met Grok
+        </button>
         <div className="row two">
-          <button className="btn btn-primary" onClick={onGrokImport}>
-            <Link width={16} height={16} /> Uit Grok toevoegen
+          <button className="btn" onClick={onGrokImport}>
+            <Link width={16} height={16} /> Grok-links plakken
           </button>
           <button className="btn" onClick={onNew}>
             <Plus width={16} height={16} /> Zelf maken
           </button>
         </div>
 
-        {bots.length === 0 && <p className="note muted">Nog geen bots. Plak je Grok-links om te beginnen.</p>}
+        {bots.length === 0 && <p className="note muted">Nog geen bots. Laat Grok ze in één keer instellen.</p>}
         <ul className="manage-list">
           {bots.map((b, i) => (
             <li key={b.id} className="manage-row">

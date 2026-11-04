@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Brand } from '../types';
 import { SWATCHES } from '../shapes';
-import { readImage } from '../files';
+import { readImage, removeLogoBackground } from '../files';
 
 interface Props {
   value: Brand;
@@ -11,7 +11,33 @@ interface Props {
 /** Bedrijfsnaam, logo en accentkleur. Gebruikt bij de eerste start en in Beheer. */
 export function BrandForm({ value, onChange }: Props) {
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  // Na het uploaden: beide versies bewaren zodat je kunt wisselen.
+  const [versions, setVersions] = useState<{ clean: string; original: string } | null>(null);
   const set = (patch: Partial<Brand>) => onChange({ ...value, ...patch });
+
+  const upload = async (file: File) => {
+    setError(null);
+    setBusy(true);
+    try {
+      const original = await readImage(file);
+      const raw = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result));
+        r.onerror = () => reject(new Error('Bestand kon niet gelezen worden.'));
+        r.readAsDataURL(file);
+      });
+      const clean = file.type === 'image/svg+xml' ? null : await removeLogoBackground(raw);
+      setVersions(clean ? { clean, original } : null);
+      set({ logo: clean ?? original });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Logo kon niet geladen worden.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const showingClean = versions && value.logo === versions.clean;
 
   return (
     <div className="brand-form">
@@ -23,34 +49,47 @@ export function BrandForm({ value, onChange }: Props) {
       <div className="field">
         <span>Logo</span>
         <div className="brand-logo-row">
-          <div className="brand-logo-preview" aria-hidden="true">
+          <div className="brand-logo-preview checker" aria-hidden="true">
             {value.logo ? <img src={value.logo} alt="" /> : <span className="logo-word">{value.name || 'Logo'}</span>}
           </div>
           <label className="btn sm file-input">
-            {value.logo ? 'Ander logo' : 'Logo uploaden'}
+            {busy ? 'Bezig…' : value.logo ? 'Ander logo' : 'Logo uploaden'}
             <input
               type="file"
               accept="image/*"
-              onChange={async (e) => {
+              disabled={busy}
+              onChange={(e) => {
                 const file = e.target.files?.[0];
                 e.target.value = '';
-                if (!file) return;
-                try {
-                  setError(null);
-                  set({ logo: await readImage(file) });
-                } catch (err) {
-                  setError(err instanceof Error ? err.message : 'Logo kon niet geladen worden.');
-                }
+                if (file) upload(file);
               }}
             />
           </label>
           {value.logo && (
-            <button type="button" className="link" onClick={() => set({ logo: undefined })}>
+            <button
+              type="button"
+              className="link"
+              onClick={() => {
+                setVersions(null);
+                set({ logo: undefined });
+              }}
+            >
               Verwijderen
             </button>
           )}
         </div>
-        <small className="muted">Zonder logo toont de app je bedrijfsnaam rechtsboven.</small>
+        {versions ? (
+          <small className="muted">
+            {showingClean ? 'Achtergrond automatisch verwijderd. ' : 'Origineel logo met achtergrond. '}
+            <button type="button" className="link" onClick={() => set({ logo: showingClean ? versions.original : versions.clean })}>
+              {showingClean ? 'Origineel gebruiken' : 'Achtergrond toch verwijderen'}
+            </button>
+          </small>
+        ) : (
+          <small className="muted">
+            Een effen achtergrond wordt automatisch verwijderd. Zonder logo toont de app je bedrijfsnaam rechtsboven.
+          </small>
+        )}
         {error && <small className="err">{error}</small>}
       </div>
 

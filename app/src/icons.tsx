@@ -37,6 +37,12 @@ export const Gear = (p: P) => (
 );
 export const ArrowUp = (p: P) => <svg {...base(p)}><path d="M12 19V5M6 11l6-6 6 6" /></svg>;
 export const ArrowDown = (p: P) => <svg {...base(p)}><path d="M12 5v14M6 13l6 6 6-6" /></svg>;
+export const Sparkle = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z" />
+    <path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" />
+  </svg>
+);
 export const Logout = (p: P) => (
   <svg {...base(p)}>
     <path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9" />

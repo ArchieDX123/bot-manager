@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Bot, BotDraft, Brand, Settings, ShapeKey } from './types';
 import { SHAPE_KEYS } from './shapes';
+import { nameKey } from './grokSetup';
 
 const KEYS = {
   bots: 'botmanager.bots.v1',
@@ -176,6 +177,56 @@ export function useStore() {
     setActiveId(null);
   }, []);
 
+  /**
+   * Automatisch instellen vanuit het antwoord van Grok. Bestaande bots (zelfde naam)
+   * worden bijgewerkt en houden hun Grok-link, favoriet en eigen afbeelding;
+   * nieuwe bots worden toegevoegd. Daarna volgt de volgorde die van Grok.
+   */
+  const applySetup = useCallback(
+    (items: BotDraft[], opts: { update: boolean; reorder: boolean }) => {
+      let added = 0;
+      let updated = 0;
+      const now = Date.now();
+      const current = bots;
+      const byName = new Map(current.map((b) => [nameKey(b.name), b]));
+      const touched: Bot[] = [];
+      items.forEach((d, i) => {
+        const key = nameKey(d.name);
+        const existing = byName.get(key);
+        if (existing) {
+          byName.delete(key);
+          if (opts.update) {
+            updated++;
+            touched.push({
+              ...existing,
+              ...d,
+              grokUrl: existing.grokUrl || d.grokUrl,
+              avatar: existing.avatar,
+              favorite: existing.favorite,
+              updatedAt: now,
+            });
+          } else {
+            touched.push(existing);
+          }
+        } else {
+          added++;
+          touched.push({ favorite: false, ...d, id: newId(), createdAt: now + i, updatedAt: now + i });
+        }
+      });
+      let next: Bot[];
+      if (opts.reorder) {
+        next = [...touched, ...current.filter((b) => byName.has(nameKey(b.name)))];
+      } else {
+        // Volgorde behouden: bijgewerkte bots op hun plaats, nieuwe achteraan.
+        const byId = new Map(touched.map((b) => [b.id, b]));
+        next = [...current.map((b) => byId.get(b.id) ?? b), ...touched.filter((b) => !current.some((c) => c.id === b.id))];
+      }
+      setBots(next);
+      return { added, updated, firstId: touched[0]?.id ?? null };
+    },
+    [bots],
+  );
+
   /** Uitloggen: bedrijf en bots van deze computer wissen; daarna volgt het welkomstscherm. */
   const logout = useCallback(() => {
     setBots([]);
@@ -200,6 +251,7 @@ export function useStore() {
     importJson,
     clearAll,
     logout,
+    applySetup,
   };
 }
 

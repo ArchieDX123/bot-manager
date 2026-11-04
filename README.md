@@ -25,14 +25,18 @@ De app is niet betaald ondertekend bij Microsoft of Apple, daarom verschijnen de
 
 ## Aan de slag
 
-1. **Je bedrijf instellen.** Bij de eerste start vul je je bedrijfsnaam in, upload je eventueel je logo en kies je een accentkleur. Je logo (of naam) staat rechtsboven.
-2. **Je Grok-bots toevoegen.** Klik op **Bots uit Grok toevoegen** (of druk op `G`) en plak de links van je bots. Je mag er de naam voor zetten:
+1. **Je bedrijf instellen.** Bij de eerste start vul je je bedrijfsnaam in, upload je eventueel je logo en kies je een accentkleur. Een effen achtergrond achter je logo wordt automatisch weggehaald. Je logo (of naam) staat rechtsboven.
+2. **Al je bots in één keer instellen.** Klik op **Automatisch instellen met Grok**:
+   1. neem een screenshot van je volledige botlijst in Grok;
+   2. kopieer de prompt uit de app en plak hem samen met de screenshot in je Grok-bot (bv. je CEO-bot). Grok maakt een overzicht "bots per team" met een stukje JSON erbij;
+   3. plak dat antwoord in de app, en eventueel ook de screenshot voor de exacte kleuren. Naam, team, functie, beschrijving, kleur en vorm worden ingesteld. Bestaande bots worden bijgewerkt en houden hun Grok-link.
+3. **Grok-links toevoegen.** Een screenshot bevat geen links. Klik op **Grok-links plakken** (of druk op `G`) en plak de links van je bots. Je mag er de naam voor zetten:
    ```
    Sales Manager - https://grok.com/bot/...
    Social Media Manager - https://grok.com/bot/...
    ```
    Elke bot krijgt meteen een eigen vorm en kleur. Links die al in je lijst staan, worden overgeslagen.
-3. **Aanvullen.** Klik op het potlood om de taak, afdeling, beschrijving, vorm, kleur of een eigen afbeelding in te stellen.
+4. **Aanvullen.** Klik op het potlood om de taak, afdeling, beschrijving, vorm, kleur of een eigen afbeelding in te stellen.
 
 > Grok biedt nog geen officiële manier om de lijst met je eigen bots op te vragen. Daarom werkt toevoegen met links. Komt die mogelijkheid er, dan kan ze aan de app worden toegevoegd.
 
