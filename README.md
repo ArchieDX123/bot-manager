@@ -24,6 +24,10 @@ Liever niets installeren? Download dan `Bot-Manager-Windows-portable.exe` en sta
 3. Open de app. De eerste keer meldt macOS dat de app niet gecontroleerd kan worden.
    Klik op **Gereed**, ga naar **Systeeminstellingen** > **Privacy en beveiliging**,
    scrol naar beneden en klik bij Bot Manager op **Open toch**. Dit hoeft maar één keer.
+   Zie je geen **Open toch**? Open **Terminal** en voer dit uit:
+   ```
+   xattr -dr com.apple.quarantine "/Applications/Bot Manager.app"
+   ```
 4. Is er een nieuwe versie, dan meldt de app dat met een downloadknop.
 
 De app is niet betaald ondertekend bij Microsoft of Apple, daarom verschijnen deze meldingen.

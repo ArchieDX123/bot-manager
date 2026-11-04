@@ -99,6 +99,10 @@
       .mock-app b { display: block; font-size: 14px; }
       .mock-app small { color: var(--muted); }
 
+      .fallback { font-size: 13px !important; }
+      .cmd { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line-2); border-radius: 10px; padding: 8px 8px 8px 12px; background: #00000047; }
+      .cmd code { font-family: var(--mono); font-size: 11px; color: var(--paper); overflow-x: auto; white-space: nowrap; flex: 1; }
+      .cmd button { font: inherit; font-size: 12px; color: var(--ink); background: var(--paper); border: 0; border-radius: 7px; padding: 5px 10px; cursor: pointer; flex: none; }
       .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
       .why div { font-size: 14px; color: rgba(244, 242, 238, 0.72); }
       .why strong { display: block; color: var(--paper); font-size: 15px; margin-bottom: 4px; }
@@ -206,6 +210,11 @@
               <div class="settings-row"><span>Privacy en beveiliging</span></div>
               <div class="settings-row"><span>"Bot Manager" is geblokkeerd</span><span class="mac-btn hl">Open toch</span></div>
             </div>
+            <p class="fallback">Zie je geen <b>Open toch</b>? Open <b>Terminal</b>, plak deze regel en druk op Enter:</p>
+            <div class="cmd">
+              <code id="mac-cmd">xattr -dr com.apple.quarantine "/Applications/Bot Manager.app"</code>
+              <button type="button" id="copy-cmd">Kopieer</button>
+            </div>
           </li>
           <li class="step">
             <span class="no">03</span>
@@ -268,6 +277,13 @@
         e.preventDefault();
         const to = os === 'mac' ? 'win' : 'mac';
         window.location.href = LATEST + FILES[to].file;
+      });
+      document.getElementById('copy-cmd').addEventListener('click', async (e) => {
+        try {
+          await navigator.clipboard.writeText(document.getElementById('mac-cmd').textContent);
+          e.target.textContent = 'Gekopieerd ✓';
+          setTimeout(() => (e.target.textContent = 'Kopieer'), 2000);
+        } catch {}
       });
       document.getElementById('tab-win').addEventListener('click', () => showTab('win'));
       document.getElementById('tab-mac').addEventListener('click', () => showTab('mac'));
