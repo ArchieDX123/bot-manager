@@ -15,7 +15,7 @@ Of kies zelf bij **[Releases](../../releases/latest)**:
 2. Toont Windows "Onbekende uitgever"? Klik op **Meer info** > **Toch uitvoeren**.
 3. Nieuwe versies worden voortaan automatisch gedownload; je krijgt een melding om te herstarten.
 
-Liever niets installeren? Download dan `Bot-Manager-Windows-portable.exe` en start die gewoon. Die versie meldt nieuwe versies, maar werkt zichzelf niet bij.
+Liever niets installeren? Download dan `Bot-Manager-Windows-portable.exe` en start die gewoon. Ook die versie werkt zichzelf bij.
 
 ### Mac (Apple Silicon en Intel)
 
@@ -28,7 +28,7 @@ Liever niets installeren? Download dan `Bot-Manager-Windows-portable.exe` en sta
    ```
    xattr -dr com.apple.quarantine "/Applications/Bot Manager.app"
    ```
-4. Is er een nieuwe versie, dan meldt de app dat met een downloadknop.
+4. Nieuwe versies worden automatisch gedownload en geïnstalleerd als je de app afsluit (zolang de app in je map Apps staat).
 
 De app is niet betaald ondertekend bij Microsoft of Apple, daarom verschijnen deze meldingen.
 

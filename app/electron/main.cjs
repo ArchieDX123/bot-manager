@@ -53,11 +53,14 @@ function createWindow() {
 }
 
 // ---------- Updates ----------
-// Windows-installatie: nieuwe versies worden op de achtergrond gedownload en bij
-// herstarten geïnstalleerd. Losse .exe en Mac (niet ondertekend, dus geen
-// automatische installatie mogelijk): de app meldt de nieuwe versie met een downloadknop.
+// Windows-installatie: electron-updater downloadt en installeert nieuwe versies.
+// Mac en losse .exe: selfUpdate.cjs downloadt de nieuwe versie en vervangt de app
+// bij het afsluiten. Lukt dat niet (bv. de app draait vanuit de .dmg), dan meldt de
+// app de nieuwe versie met een downloadknop.
 const autoInstall = app.isPackaged && process.platform === 'win32' && !process.env.PORTABLE_EXECUTABLE_DIR;
 let updater = null;
+const { createSelfUpdater } = require('./selfUpdate.cjs');
+let self = null; // wordt aangemaakt zodra de app klaar is
 let lastStatus = { state: 'idle' };
 
 function send(status) {
@@ -102,7 +105,10 @@ async function checkForUpdates() {
     });
     if (!res.ok) throw new Error(`GitHub antwoordde met ${res.status}`);
     const latest = String((await res.json()).tag_name || '').replace(/^v/, '');
-    if (latest && newer(latest, app.getVersion())) send({ state: 'available', version: latest });
+    if (latest && newer(latest, app.getVersion())) {
+      if (self && self.kind) await self.fetchUpdate(latest);
+      else send({ state: 'available', version: latest });
+    }
     else send({ state: 'none', version: app.getVersion() });
   } catch (err) {
     send({ state: 'error', message: String(err && err.message ? err.message : err).slice(0, 200) });
@@ -112,7 +118,9 @@ async function checkForUpdates() {
 ipcMain.handle('app:version', () => app.getVersion());
 ipcMain.handle('update:check', () => checkForUpdates());
 ipcMain.handle('update:install', () => {
-  if (updater && lastStatus.state === 'ready') updater.quitAndInstall();
+  if (lastStatus.state !== 'ready') return;
+  if (updater) updater.quitAndInstall();
+  else if (self) self.restartAndInstall();
 });
 ipcMain.handle('update:open', () => shell.openExternal(RELEASES_URL));
 
@@ -123,6 +131,7 @@ app.on('second-instance', () => {
   }
 });
 app.whenReady().then(() => {
+  self = createSelfUpdater({ repo: REPO, send });
   createWindow();
   // Kort na het opstarten en daarna elke 6 uur naar updates kijken.
   setTimeout(checkForUpdates, 8000);
@@ -130,6 +139,13 @@ app.whenReady().then(() => {
 });
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+// Klaarstaande update (Mac of losse .exe) bij gewoon afsluiten stil installeren.
+app.on('before-quit', (e) => {
+  if (!self || !self.isReady() || self.isInstalling()) return;
+  // Even wachten met afsluiten tot het vervangen veilig gestart is.
+  e.preventDefault();
+  self.installOnQuit().finally(() => app.exit(0));
 });
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
