@@ -1,6 +1,6 @@
 name: Build Windows en Mac
 
-# Bouwt de app wanneer er een versie-tag (bv. v1.0.0) wordt gepusht,
+# Bouwt de app wanneer er een versie-tag (bv. v2.0.0) wordt gepusht,
 # of handmatig via Actions > "Build Windows en Mac" > Run workflow.
 on:
   push:
@@ -27,13 +27,16 @@ jobs:
         with:
           node-version: 22
 
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
 
-      - name: Windows bouwen
+      - name: App bouwen
+        run: npm run build
+
+      - name: Windows-versie maken
         if: runner.os == 'Windows'
         run: npm run dist:win
 
-      - name: Mac bouwen
+      - name: Mac-versie maken
         if: runner.os == 'macOS'
         run: npm run dist:mac
         env:
